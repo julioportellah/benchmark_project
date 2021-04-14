@@ -104,13 +104,13 @@ if __name__ == '__main__':
     project = 'benchmarkproject-308623'
     zone = 'us-east1-b'
     time_creation = dt.datetime.now()
-    machine_type = 'n1-standard-1'
-    operation = create_instance(compute,'benchmarkproject-308623','us-east1-b','test-dev-vm',bucket='jp-benchmark-bucket',machine_name= machine_type)
-    wait_for_operation(compute, project, zone, operation['name'])
-    time_setup = dt.datetime.now()
-    delete_request = compute.instances().delete(project=project, zone=zone,instance='test-dev-vm').execute()
-    wait_for_operation(compute, project, zone, delete_request['name'])
-    
-    time_diff = (time_setup - time_creation).total_seconds()
-    print(machine_type, time_diff)
+    machine_types = ['n1-standard-1']
+    for machine_type in machine_types:
+        operation = create_instance(compute,'benchmarkproject-308623','us-east1-b','test-dev-vm',bucket='jp-benchmark-bucket',machine_name= machine_type)
+        wait_for_operation(compute, project, zone, operation['name'])
+        time_setup = dt.datetime.now()
+        delete_request = compute.instances().delete(project=project, zone=zone,instance='test-dev-vm').execute()
+        wait_for_operation(compute, project, zone, delete_request['name'])
+        time_diff = (time_setup - time_creation).total_seconds()
+        print(machine_type, time_diff)
  
