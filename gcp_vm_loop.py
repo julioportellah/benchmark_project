@@ -24,11 +24,13 @@ def wait_for_operation(compute, project, zone, operation):
         time.sleep(1)
 
 
-def create_instance(compute, project, zone, name, bucket):
+def create_instance(compute, project, zone, name, bucket, machine_name):
     image_response = compute.images().getFromFamily(
         project='ubuntu-os-cloud', family='ubuntu-1804-lts').execute()
     source_disk_image = image_response['selfLink']
-    machine_type = "zones/%s/machineTypes/n1-standard-1" % zone
+    machine_type = "zones/{}/machineTypes/{}".format(zone, machine_name)
+    print(machine_type)
+    #machine_type = "zones/%s/machineTypes/n1-standard-1" % zone
     startup_script = open(
         os.path.join(
             os.path.dirname(__file__), 'startup-script.sh'), 'r').read()
@@ -102,9 +104,10 @@ if __name__ == '__main__':
     project = 'benchmarkproject-308623'
     zone = 'us-east1-b'
     time_creation = dt.datetime.now()
-    operation = create_instance(compute,'benchmarkproject-308623','us-east1-b','test-dev-vm',bucket='jp-benchmark-bucket')
+    machine_type = 'n1-standard-1'
+    operation = create_instance(compute,'benchmarkproject-308623','us-east1-b','test-dev-vm',bucket='jp-benchmark-bucket',machine_name= machine_type)
     wait_for_operation(compute, project, zone, operation['name'])
     time_setup = dt.datetime.now()
     time_diff = (time_setup - time_creation).total_seconds()
-    print(time_diff)
+    print(machine_type, time_diff)
  
