@@ -104,13 +104,26 @@ if __name__ == '__main__':
     project = 'benchmarkproject-308623'
     zone = 'us-east1-b'
     time_creation = dt.datetime.now()
-    machine_types = ['n1-standard-1']
+    #machine_types = ['n1-standard-1']
+    machine_types = ['e2-standard-2','e2-standard-4','e2-standard-8','e2-standard-16','c2-standard-4','c2-standard-8',
+                    'n2d-standard-2','n2d-highmem-16','e2-standard-2','e2-standard-8','c2-standard-4','n1-standard-1',
+                    'e2-medium','n2d-standard-8','e2-highcpu-2']
+    result_df = pd.DataFrame(columns=['vm_name', 'type_of_vm', 'number_machine','time_diff'])
     for machine_type in machine_types:
-        operation = create_instance(compute,'benchmarkproject-308623','us-east1-b','test-dev-vm',bucket='jp-benchmark-bucket',machine_name= machine_type)
-        wait_for_operation(compute, project, zone, operation['name'])
-        time_setup = dt.datetime.now()
-        delete_request = compute.instances().delete(project=project, zone=zone,instance='test-dev-vm').execute()
-        wait_for_operation(compute, project, zone, delete_request['name'])
-        time_diff = (time_setup - time_creation).total_seconds()
-        print(machine_type, time_diff)
- 
+        for i in range(6):
+            operation = create_instance(compute,'benchmarkproject-308623','us-east1-b','test-dev-vm',bucket='jp-benchmark-bucket',machine_name= machine_type)
+            print('**************************************************')
+            print('Creating Instance')
+            wait_for_operation(compute, project, zone, operation['name'])
+            time_setup = dt.datetime.now()
+            print('Deleting Instance')
+            delete_request = compute.instances().delete(project=project, zone=zone,instance='test-dev-vm').execute()
+            wait_for_operation(compute, project, zone, delete_request['name'])
+            time_diff = (time_setup - time_creation).total_seconds()
+            print(machine_type,i, time_diff)
+            number_machine = f'{machine_type} #{i+1}'
+            result_df = result_df.append({'type_of_vm': machine_type, 'number_machine': number_machine, 'time_diff': time_diff}, ignore_index=True)
+            pass
+        pass
+    result_df.to_csv('result_df.csv', index = False)
+    pass
