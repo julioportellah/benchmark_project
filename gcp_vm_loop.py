@@ -6,6 +6,7 @@ import os
 import time
 from six.moves import input
 import datetime as dt
+import pandas as pd
 
 def wait_for_operation(compute, project, zone, operation):
     print('Waiting for operation to finish...')
@@ -103,14 +104,17 @@ if __name__ == '__main__':
     print(compute)
     project = 'benchmarkproject-308623'
     zone = 'us-east1-b'
-    time_creation = dt.datetime.now()
+    #time_creation = dt.datetime.now()
     #machine_types = ['n1-standard-1']
     machine_types = ['e2-standard-2','e2-standard-4','e2-standard-8','e2-standard-16','c2-standard-4','c2-standard-8',
                     'n2d-standard-2','n2d-highmem-16','e2-standard-2','e2-standard-8','c2-standard-4','n1-standard-1',
                     'e2-medium','n2d-standard-8','e2-highcpu-2']
+    instances = ['machine1', 'machine2', 'machine3', 'machine4', 'machine5', 'machine6']
     result_df = pd.DataFrame(columns=['vm_name', 'type_of_vm', 'number_machine','time_diff'])
-    for machine_type in machine_types:
+    print(machine_types[2])
+    for machine_type in [machine_types[-1]]:
         for i in range(6):
+            time_creation = dt.datetime.now()
             operation = create_instance(compute,'benchmarkproject-308623','us-east1-b','test-dev-vm',bucket='jp-benchmark-bucket',machine_name= machine_type)
             print('**************************************************')
             print('Creating Instance')
